@@ -51,7 +51,7 @@ class Recipe(models.Model):
         Tag, related_name='recipes',
         verbose_name='теги')
     image = models.ImageField(
-        'изображение', upload_to='beckend/static/images/')
+        'изображение', upload_to='backend_static/static/images/')
     text = models.TextField(
         'описание рецепта',
         help_text='Добавьте описание рецепта!')
