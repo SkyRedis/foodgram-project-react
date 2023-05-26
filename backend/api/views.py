@@ -5,7 +5,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import (IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
@@ -16,10 +15,10 @@ from users.models import Subscribe, UserFoodgram
 
 from .filters import IngredientFilter, RecipeFilter
 from .pagination import Pagination
-from .serializers import (IngredientSerializer, ReadRecipeSerializer,
-                          RecipeFavouriteSerializer, RecipeSerializer,
-                          SubscribeSerializer, TagSerializer,
-                          UserFoodgramCreateSerializer)
+from .serializers import (FavouriteSerializer, IngredientSerializer,
+                          ReadRecipeSerializer, RecipeSerializer,
+                          ShoppingCartSerializer, SubscribeSerializer,
+                          TagSerializer, UserFoodgramCreateSerializer)
 
 
 class IngredientViewSet(viewsets.ModelViewSet):
@@ -53,20 +52,17 @@ class RecipeViewSet(viewsets.ModelViewSet):
         recipe = get_object_or_404(Recipe, pk=pk)
 
         if self.request.method == 'POST':
-            if ShoppingCart.objects.filter(user=user,
-                                           recipe=recipe).exists():
-                raise ValidationError(
-                    'Рецепт уже в списке покупок.')
-            ShoppingCart.objects.create(user=user, recipe=recipe)
-            serializer = RecipeFavouriteSerializer(
-                recipe, context={'request': request})
+            data = {
+                'user': request.user.id,
+                'recipe': recipe.id
+            }
+            serializer = ShoppingCartSerializer(
+                data=data, context={'request': request})
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         if self.request.method == 'DELETE':
-            if not ShoppingCart.objects.filter(user=user,
-                                               recipe=recipe).exists():
-                raise ValidationError(
-                    'Рецепта нет в списке покупок, либо он уже удален.')
             shopping_cart = get_object_or_404(
                 ShoppingCart,
                 user=user,
@@ -100,18 +96,17 @@ class RecipeViewSet(viewsets.ModelViewSet):
         recipe = get_object_or_404(Recipe, pk=pk)
 
         if self.request.method == 'POST':
-            if Favourite.objects.filter(user=user, recipe=recipe).exists():
-                raise ValidationError('Рецепт уже в избранном.')
-            Favourite.objects.create(user=user, recipe=recipe)
-            serializer = RecipeFavouriteSerializer(
-                recipe, context={'request': request})
+            data = {
+                'user': request.user.id,
+                'recipe': recipe.id
+            }
+            serializer = FavouriteSerializer(
+                data=data, context={'request': request})
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         if self.request.method == 'DELETE':
-            if not Favourite.objects.filter(user=user,
-                                            recipe=recipe).exists():
-                raise ValidationError(
-                        'Рецепта нет в избранном, либо он уже удален.')
             favorite = get_object_or_404(Favourite, user=user, recipe=recipe)
             favorite.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
@@ -135,7 +130,7 @@ class UsersViewSet(UserViewSet):
             serializer = SubscribeSerializer(
                 author,
                 data=request.data,
-                context={"request": request})
+                context={'request': request})
             serializer.is_valid(raise_exception=True)
             Subscribe.objects.create(user=user, author=author)
             return Response(serializer.data, status=status.HTTP_201_CREATED)

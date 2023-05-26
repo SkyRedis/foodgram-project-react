@@ -1,6 +1,13 @@
 from django.contrib import admin
 
+from foodgram.settings import CONST_NUMBER_ONE
+
 from .models import Favourite, Ingredient, Recipe, ShoppingCart, Tag
+
+
+class IngredientRecipeInLine(admin.TabularInline):
+    model = Recipe.ingredients.through
+    extra = CONST_NUMBER_ONE
 
 
 @admin.register(Ingredient)
@@ -28,6 +35,7 @@ class RecipeAdmin(admin.ModelAdmin):
     search_fields = ('name',)
     list_filter = ('name', 'cooking_time')
     empty_value_display = '-пусто-'
+    inlines = (IngredientRecipeInLine, )
 
 
 @admin.register(Favourite)

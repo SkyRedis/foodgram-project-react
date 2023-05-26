@@ -13,13 +13,13 @@ class UserFoodgram(AbstractUser):
     last_name = models.CharField('Фамилия', max_length=150, blank=True)
     password = models.CharField('Пароль', max_length=150)
 
-    def __str__(self) -> str:
-        return self.username
-
     class Meta:
+        ordering = ['username', ]
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
-        ordering = ['username']
+
+    def __str__(self) -> str:
+        return self.username
 
 
 class Subscribe(models.Model):
@@ -32,15 +32,15 @@ class Subscribe(models.Model):
         related_name='subscribing',
         verbose_name='Автор')
 
+    class Meta:
+        ordering = ['author', ]
+        verbose_name = 'Подписка на автора'
+        verbose_name_plural = 'Подписки на авторов'
+        constraints = [models.UniqueConstraint(
+            fields=['user', 'author'],
+            name='unique_follow')]
+
     def __str__(self) -> str:
         return (
             f'Пользователь {self.user}'
             f' подписался на {self.author.username}')
-
-    class Meta:
-        ordering = ['author']
-        verbose_name = 'Подписка на автора'
-        verbose_name_plural = "Подписки на авторов"
-        constraints = [models.UniqueConstraint(
-            fields=['user', 'author'],
-            name='unique_follow')]

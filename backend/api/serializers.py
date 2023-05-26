@@ -7,7 +7,10 @@ from rest_framework import serializers, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import SerializerMethodField
 
-from recipes.models import Ingredient, IngredientRecipe, Recipe, Tag
+from foodgram.settings import (CONST_NUMBER_INGREDIENT, CONST_NUMBER_ONE,
+                               CONST_NUMBER_TIME)
+from recipes.models import (Favourite, Ingredient, IngredientRecipe, Recipe,
+                            ShoppingCart, Tag)
 from users.models import Subscribe, UserFoodgram
 
 
@@ -188,24 +191,30 @@ class RecipeSerializer(serializers.ModelSerializer):
         return tags
 
     def validate_cooking_time(self, cooking_time):
-        if cooking_time < 1:
+        if cooking_time < CONST_NUMBER_ONE:
             raise ValidationError(
                 'Время готовки должно быть не меньше одной минуты')
+        elif cooking_time > CONST_NUMBER_TIME:
+            raise ValidationError(
+                'Время готовки должно быть не больше 24 часов')
         return cooking_time
 
     def validate_ingredients(self, ingredients):
-        ingredients_list = []
+        ingredients_set = set()
         if not ingredients:
             raise serializers.ValidationError(
                 'Отсутствуют ингридиенты')
         for ingredient in ingredients:
-            if ingredient['id'] in ingredients_list:
+            if ingredient['id'] in ingredients_set:
                 raise ValidationError(
                     'Ингридиенты должны быть уникальны')
-            ingredients_list.append(ingredient['id'])
-            if int(ingredient.get('amount')) < 1:
+            ingredients_set.add(ingredient['id'])
+            if int(ingredient.get('amount')) < CONST_NUMBER_ONE:
                 raise ValidationError(
                     'Ингредиентов меньше 1')
+            elif int(ingredient.get('amount')) > CONST_NUMBER_INGREDIENT:
+                raise ValidationError(
+                    'Ингредиентов больше 100')
         return ingredients
 
     @staticmethod
@@ -242,3 +251,30 @@ class RecipeSerializer(serializers.ModelSerializer):
         return ReadRecipeSerializer(instance, context={
             'request': self.context.get('request')
         }).data
+
+
+class ShoppingCartSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ShoppingCart
+        fields = ('user', 'recipe')
+
+    def validate(self, data):
+        user = data['user']
+        if user.shopping_cart.filter(recipe=data['recipe']).exists():
+            raise ValidationError(
+                'Рецепт уже в списке покупок.')
+        return data
+
+
+class FavouriteSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Favourite
+        fields = ('user', 'recipe',)
+
+    def validate(self, data):
+        user = data['user']
+        if user.favourites.filter(recipe=data['recipe']).exists():
+            raise ValidationError('Рецепт уже в избранном.')
+        return data

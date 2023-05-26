@@ -1,6 +1,7 @@
 from django.core.validators import MinValueValidator
 from django.db import models
 
+from foodgram.settings import CONST_NUMBER_ONE
 from users.models import UserFoodgram
 
 User = UserFoodgram
@@ -12,13 +13,13 @@ class Ingredient(models.Model):
     measurement_unit = models.CharField(
         'единица измерения', max_length=200, default='кг')
 
-    def __str__(self) -> str:
-        return self.name
-
     class Meta:
+        ordering = ['name', ]
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
-        ordering = ['name']
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class Tag(models.Model):
@@ -26,13 +27,13 @@ class Tag(models.Model):
     color = models.CharField('цвет в HEX', unique=True, max_length=7)
     slug = models.SlugField('уникальный слаг', unique=True, max_length=200)
 
-    def __str__(self) -> str:
-        return self.name
-
     class Meta:
+        ordering = ['name', ]
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
-        ordering = ['name']
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class Recipe(models.Model):
@@ -57,14 +58,16 @@ class Recipe(models.Model):
         help_text='Добавьте описание рецепта!')
     cooking_time = models.PositiveSmallIntegerField(
         'время приготовления(мин.)',
-        validators=[MinValueValidator(1, message='Минимум 1 минута!')])
+        validators=[MinValueValidator(
+            CONST_NUMBER_ONE, message='Минимум 1 минута!')])
+
+    class Meta:
+        ordering = ['name', ]
+        verbose_name = 'Рецепт'
+        verbose_name_plural = 'Рецепты'
 
     def __str__(self) -> str:
         return self.name
-
-    class Meta:
-        verbose_name = 'Рецепт'
-        verbose_name_plural = 'Рецепты'
 
 
 class IngredientRecipe(models.Model):
@@ -74,15 +77,17 @@ class IngredientRecipe(models.Model):
         Recipe, on_delete=models.CASCADE,
         related_name='ingredient_recipe', verbose_name='рецепт')
     amount = models.PositiveSmallIntegerField(
-        'вес', validators=[MinValueValidator(1, message='Значение менее 1')])
+        'вес', validators=[MinValueValidator(
+            CONST_NUMBER_ONE, message='Значение менее 1')])
+
+    class Meta:
+        ordering = ('-id', )
+        verbose_name = 'IngredientRecipe'
 
     def __str__(self) -> str:
         return (
-            f'{self.ingredient.name} - {self.value}'
+            f'{self.ingredient.name} - {self.amount}'
             f'{self.ingredient.measurement_unit}')
-
-    class Meta:
-        verbose_name = 'IngredientRecipe'
 
 
 class Favourite(models.Model):
@@ -97,15 +102,16 @@ class Favourite(models.Model):
         related_name='favourites',
         verbose_name='рецепт',)
 
-    def __str__(self):
-        return f'Пользователь {self.user} добавил {self.recipe} в избранное'
-
     class Meta:
+        ordering = ('user', )
         verbose_name = 'избранное'
         verbose_name_plural = 'избранные'
         constraints = [
             models.UniqueConstraint(fields=['user', 'recipe'],
                                     name='unique_favourite')]
+
+    def __str__(self):
+        return f'Пользователь {self.user} добавил {self.recipe} в избранное'
 
 
 class ShoppingCart(models.Model):
@@ -120,13 +126,14 @@ class ShoppingCart(models.Model):
         related_name='shopping_cart',
         verbose_name='рецепт')
 
-    def __str__(self):
-        return (
-            f'Пользователь {self.user}'
-            f' добавил в список покупок {self.recipe.name}')
-
     class Meta:
+        ordering = ('user', )
         verbose_name = 'список покупок'
         verbose_name_plural = 'списки покупок'
         constraints = [models.UniqueConstraint(
             fields=['user', 'recipe'], name='unique_shopping_cart')]
+
+    def __str__(self):
+        return (
+            f'Пользователь {self.user}'
+            f' добавил в список покупок {self.recipe.name}')
