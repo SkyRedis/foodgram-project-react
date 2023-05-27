@@ -1,5 +1,4 @@
 from django.contrib import admin
-
 from foodgram.settings import CONST_NUMBER_ONE
 
 from .models import Favourite, Ingredient, Recipe, ShoppingCart, Tag

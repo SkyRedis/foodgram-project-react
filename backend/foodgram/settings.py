@@ -9,7 +9,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 CONST_NUMBER_ONE = 1
 CONST_NUMBER_TIME = 1_440
-CONST_NUMBER_INGREDIENT = 100
+CONST_NUMBER_INGREDIENT = 10000
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/

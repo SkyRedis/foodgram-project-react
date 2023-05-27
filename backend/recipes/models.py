@@ -1,7 +1,6 @@
+from django.conf import settings as s
 from django.core.validators import MinValueValidator
 from django.db import models
-
-from foodgram.settings import CONST_NUMBER_ONE
 from users.models import UserFoodgram
 
 User = UserFoodgram
@@ -59,7 +58,7 @@ class Recipe(models.Model):
     cooking_time = models.PositiveSmallIntegerField(
         'время приготовления(мин.)',
         validators=[MinValueValidator(
-            CONST_NUMBER_ONE, message='Минимум 1 минута!')])
+            s.CONST_NUMBER_ONE, message='Минимум 1 минута!')])
 
     class Meta:
         ordering = ['name', ]
@@ -72,13 +71,14 @@ class Recipe(models.Model):
 
 class IngredientRecipe(models.Model):
     ingredient = models.ForeignKey(
-        Ingredient, on_delete=models.CASCADE, verbose_name='ингредиент')
+        Ingredient, on_delete=models.CASCADE,
+        related_name='ingredient_recipe', verbose_name='ингредиент')
     recipe = models.ForeignKey(
         Recipe, on_delete=models.CASCADE,
         related_name='ingredient_recipe', verbose_name='рецепт')
     amount = models.PositiveSmallIntegerField(
         'вес', validators=[MinValueValidator(
-            CONST_NUMBER_ONE, message='Значение менее 1')])
+            s.CONST_NUMBER_ONE, message='Значение менее 1')])
 
     class Meta:
         ordering = ('-id', )

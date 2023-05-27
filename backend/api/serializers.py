@@ -1,16 +1,14 @@
 import base64
 
+from django.conf import settings as s
 from django.core.files.base import ContentFile
 from django.shortcuts import get_object_or_404
 from djoser.serializers import UserSerializer
+from recipes.models import (Favourite, Ingredient, IngredientRecipe, Recipe,
+                            ShoppingCart, Tag)
 from rest_framework import serializers, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import SerializerMethodField
-
-from foodgram.settings import (CONST_NUMBER_INGREDIENT, CONST_NUMBER_ONE,
-                               CONST_NUMBER_TIME)
-from recipes.models import (Favourite, Ingredient, IngredientRecipe, Recipe,
-                            ShoppingCart, Tag)
 from users.models import Subscribe, UserFoodgram
 
 
@@ -55,7 +53,7 @@ class UserFoodgramSerializer(serializers.ModelSerializer):
         user = self.context.get('request').user
         if user.is_anonymous:
             return False
-        return Subscribe.objects.filter(user=user, author=obj).exists()
+        return user.subscriber.filter(user=user, author=obj).exists()
 
 
 class SubscribeSerializer(UserSerializer):
@@ -191,10 +189,10 @@ class RecipeSerializer(serializers.ModelSerializer):
         return tags
 
     def validate_cooking_time(self, cooking_time):
-        if cooking_time < CONST_NUMBER_ONE:
+        if cooking_time < s.CONST_NUMBER_ONE:
             raise ValidationError(
                 'Время готовки должно быть не меньше одной минуты')
-        elif cooking_time > CONST_NUMBER_TIME:
+        elif cooking_time > s.CONST_NUMBER_TIME:
             raise ValidationError(
                 'Время готовки должно быть не больше 24 часов')
         return cooking_time
@@ -209,12 +207,12 @@ class RecipeSerializer(serializers.ModelSerializer):
                 raise ValidationError(
                     'Ингридиенты должны быть уникальны')
             ingredients_set.add(ingredient['id'])
-            if int(ingredient.get('amount')) < CONST_NUMBER_ONE:
+            if int(ingredient.get('amount')) < s.CONST_NUMBER_ONE:
                 raise ValidationError(
-                    'Ингредиентов меньше 1')
-            elif int(ingredient.get('amount')) > CONST_NUMBER_INGREDIENT:
+                    'Вес ингредиентов меньше 1')
+            elif int(ingredient.get('amount')) > s.CONST_NUMBER_INGREDIENT:
                 raise ValidationError(
-                    'Ингредиентов больше 100')
+                    'Вес ингредиентов больше 10000')
         return ingredients
 
     @staticmethod
@@ -241,7 +239,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         instance.tags.clear()
-        IngredientRecipe.objects.filter(recipe=instance).delete()
+        instance.ingredient_recipe.filter(recipe=instance).delete()
         instance.tags.set(validated_data.pop('tags'))
         ingredients = validated_data.pop('ingredients')
         self.create_ingredients(instance, ingredients)
