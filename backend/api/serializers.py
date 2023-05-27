@@ -9,7 +9,7 @@ from recipes.models import (Favourite, Ingredient, IngredientRecipe, Recipe,
 from rest_framework import serializers, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import SerializerMethodField
-from users.models import Subscribe, UserFoodgram
+from users.models import UserFoodgram
 
 
 class Base64ImageField(serializers.ImageField):
