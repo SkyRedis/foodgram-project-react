@@ -43,13 +43,13 @@ jobs:
         uses: docker/build-push-action@v2 
         with:
           push: true
-          tags: SkyRed/foodgram_backend:v2
+          tags: skyredis/foodgram_backend:v2
 
       - name: Push frontend image to Docker Hub
         uses: docker/build-push-action@v2 
         with:
           push: true
-          tags: SkyRed/foodgram_frontend:v2
+          tags: skyredis/foodgram_frontend:v2
 
   deploy:
     runs-on: ubuntu-latest
