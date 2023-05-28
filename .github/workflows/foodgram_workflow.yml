@@ -65,10 +65,10 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
         script: |
-          sudo docker compose stop
-          sudo docker compose rm -f backend frontend
-          sudo docker image rm skyredis/foodgram_backend:latest skyredis/foodgram_frontend:latest
-          sudo docker-compose pull backend frontend
+          cd infra
+          sudo docker-compose down
+          sudo docker pull skyredis/foodgram_backend:latest
+          sudo docker pull skyredis/foodgram_frontend:latest
           touch .env
           echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
           echo DB_NAME=${{ secrets.DB_NAME }} >> .env
