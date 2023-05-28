@@ -8,7 +8,7 @@ User = UserFoodgram
 
 class Ingredient(models.Model):
     name = models.CharField(
-        'Наименование', max_length=200)
+        'Наименование', max_length=200, db_index=True)
     measurement_unit = models.CharField(
         'единица измерения', max_length=200, default='кг')
 
@@ -59,9 +59,13 @@ class Recipe(models.Model):
         'время приготовления(мин.)',
         validators=[MinValueValidator(
             s.CONST_NUMBER_ONE, message='Минимум 1 минута!')])
+    pub_date = models.DateTimeField(
+        verbose_name='Дата публикации рецепта',
+        auto_now_add=True,
+    )
 
     class Meta:
-        ordering = ['name', ]
+        ordering = ['-pub_date', ]
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
 
