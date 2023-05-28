@@ -44,11 +44,11 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'foodgram.urls'
 
-TEMPLATES_DIR = BASE_DIR / 'templates'
+# TEMPLATES_DIR = BASE_DIR / 'templates'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [TEMPLATES_DIR],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -114,7 +114,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 
 DEFAULT_FROM_EMAIL = 'admin@yamdb.com'
 
-EMAIL_FILE_PATH = ((BASE_DIR / 'sent_emails/'))
+# EMAIL_FILE_PATH = ((BASE_DIR / 'sent_emails/'))
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
