@@ -46,7 +46,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: skyredis/foodgram_backend
+          tags: skyredis/foodgram_backend:latest
           context: backend
 
   deploy:
@@ -65,7 +65,7 @@ jobs:
             sudo docker-compose stop
             sudo docker-compose rm backend
             sudo docker-compose pull backend
-            sudo docker pull skyredis/foodgram_backend
+            sudo docker pull skyredis/foodgram_backend:latest
             touch .env
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
             echo DB_NAME=${{ secrets.DB_NAME }} >> .env
