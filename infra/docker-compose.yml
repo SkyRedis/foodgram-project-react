@@ -7,7 +7,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
-      - .env
+       - ./.env
 
   backend:
     image: skyrediska/foodgram_backend:latest
@@ -19,11 +19,15 @@ services:
     env_file:
       - .env
     restart: always
+    container_name: foodgram_backend
 
   frontend:
     image: skyrediska/foodgram_frontend:latest
     volumes:
       - ../frontend/:/app/result_build/
+    depends_on: 
+      - db 
+    container_name: foodgram_frontend
 
 
   nginx:
@@ -32,13 +36,13 @@ services:
       - "80:80"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - ../frontend/build:/usr/share/nginx/html/
-      - ../docs/:/usr/share/nginx/html/api/docs/
+      - ./frontend/build:/usr/share/nginx/html/
+      - ./docs/:/usr/share/nginx/html/api/docs/
       - static_value:/var/html/static/
       - media_value:/var/html/media/
     depends_on:
       - backend
-      - frontend
+    container_name: foodgram_nginx
 
 volumes:
   postgres_data:
