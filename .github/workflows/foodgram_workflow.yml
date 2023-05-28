@@ -67,10 +67,7 @@ jobs:
         passphrase: ${{ secrets.PASSPHRASE }}
         script: |
           sudo docker compose stop
-          sudo docker image rm skyredis/foodgram_backend skyredis/foodgram_frontend
-          sudo docker pull skyredis/foodgram_frontend:latest
-          sudo docker pull skyredis/foodgram_backend:latest
-          sudo docker compose pull frontend backend
+          sudo docker rmi skyredis/foodgram_backend
           rm -f .env 
           touch .env
           echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
