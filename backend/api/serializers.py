@@ -37,7 +37,7 @@ class UserFoodgramCreateSerializer(serializers.ModelSerializer):
             first_name=validated_data['first_name'],
             last_name=validated_data['last_name'])
         user.set_password(validated_data['password'])
-        return user.save()
+        return UserFoodgram.objects.create_user(**validated_data)
 
 
 class UserFoodgramSerializer(serializers.ModelSerializer):
