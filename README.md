@@ -99,5 +99,9 @@ ____
 ### 3. GET, POST, PATCH к рецептам /api/recipes/, /api/recipes/{id}/
 ### 4. Документация по api доступна по ссылке http://skyrediska.sytes.net/api/docs/
 
+ ## Данные для входа в админку:
+- ![kirik.petrow@yandex.ru](https://via.placeholder.com/15/f03c15/000000?text=+) `#f03c15`
+- ![Alliance_75](https://via.placeholder.com/15/f03c15/000000?text=+) `#f03c15`
+ 
 **Автор проекта:**
 Петров Кирилл
