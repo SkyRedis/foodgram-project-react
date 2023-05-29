@@ -12,9 +12,9 @@ CONST_NUMBER_INGREDIENT = 10000
 
 SECRET_KEY = os.getenv('SECRET_KEY', 'default-value')
 
-DEBUG = True
-
 ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS', default='*')]
+
+DEBUG = True
 
 INSTALLED_APPS = [
     'django.contrib.admin',
