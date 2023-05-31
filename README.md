@@ -91,13 +91,19 @@ ____
 ____
 
 ## Некоторые примеры запросов к API:
-Приложение доступно по адресу http://skyrediska.sytes.net/recipes
+Приложение доступно по адресу http://skyrediska.sytes.net/recipes/ или http://84.201.140.103/recipes/
 ### 1.1. Пользователь отправляет POST-запрос с параметрами email, username, first_name, last_name, password на эндпоинт /api/users/
 ### 1.2. Пользователь отправляет POST-запрос с параметрами email и password на эндпоинт hapi/auth/token/login/, в ответе на запрос ему приходит token.
 ### 1.3. Добавить токен в заголовок авторизации - TOKEN <токен>.
 ### 2. GET - список пользователей, профиль пользователя, текущий пользователь /api/users/, /api/users/{id}, /api/users/me/.
 ### 3. GET, POST, PATCH к рецептам /api/recipes/, /api/recipes/{id}/
 ### 4. Документация по api доступна по ссылке http://skyrediska.sytes.net/api/docs/
+
+ ## Данные для входа в админку: 
+
+- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) `kirik.petrow@yandex.ru` 
+
+- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) `Alliance_75`
 
 **Автор проекта:**
 Петров Кирилл
